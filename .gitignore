@@ -1,0 +1,66 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env
+.env*.local
+
+# vercel
+.vercel
+
+# pnpm 10 auto-writes build-script approvals here; keep it local-only.
+pnpm-workspace.yaml
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+/media
+
+# local ad-hoc PostgreSQL data directory (used only when Docker isn't available)
+/.pgdata
+
+# Mosquitto broker data/logs (bind-mounted into the container; never commit
+# generated broker state).
+/infrastructure/mosquitto/data/*
+!/infrastructure/mosquitto/data/.gitkeep
+/infrastructure/mosquitto/log/*
+!/infrastructure/mosquitto/log/.gitkeep
+
+# Python simulator: virtual environment, caches, and generated local state
+/services/simulator/.venv
+/services/simulator/**/__pycache__/
+/services/simulator/.pytest_cache
+/services/simulator/**/*.pyc
+/services/simulator/state/
+
+# Python edge gateway environments, caches, and durable runtime SQLite queue.
+/services/gateway/.venv
+/services/gateway/**/__pycache__/
+/services/gateway/.pytest_cache
+/services/gateway/**/*.pyc
+/runtime/

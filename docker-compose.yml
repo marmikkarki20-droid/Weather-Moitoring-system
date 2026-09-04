@@ -1,0 +1,45 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: weathergrid
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d weathergrid']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  # Local development MQTT broker. Anonymous access is enabled in
+  # infrastructure/mosquitto/config/mosquitto.conf, but the broker port is
+  # bound to 127.0.0.1 only, so it is not reachable from other machines or
+  # containers on the network. See that file for production-hardening notes
+  # (authentication, TLS) required before deploying this broker anywhere
+  # other than a developer's own machine.
+  mosquitto:
+    image: eclipse-mosquitto:2.1.2-alpine
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:1883:1883'
+    volumes:
+      - ./infrastructure/mosquitto/config:/mosquitto/config:ro
+      - ./infrastructure/mosquitto/data:/mosquitto/data
+      - ./infrastructure/mosquitto/log:/mosquitto/log
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mosquitto_pub -h 127.0.0.1 -p 1883 -t weathergrid/healthcheck -m ok -q 1 >/dev/null 2>&1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+volumes:
+  pgdata:

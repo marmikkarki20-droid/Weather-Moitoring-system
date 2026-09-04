@@ -1,0 +1,16 @@
+import type { Endpoint } from 'payload'
+import { dashboardError, dashboardUser, history, listAlerts, listDevices, overview } from '@/lib/dashboard-api'
+
+const endpoint = (path: string, handler: Endpoint['handler']): Endpoint => ({ path, method: 'get', handler })
+const guard = (handler: (req: Parameters<Endpoint['handler']>[0]) => Promise<Response>): Endpoint['handler'] => async req => dashboardUser(req) ? handler(req) : dashboardError(401, 'dashboard_authentication_required')
+
+export const dashboardApiEndpoints: Endpoint[] = [
+  endpoint('/dashboard/overview', guard(async req => Response.json(await overview(req.payload)))),
+  endpoint('/dashboard/live', guard(async req => Response.json(await history(req.payload, { ...req, query: { ...req.query, from: req.query.from || new Date(Date.now() - 60 * 60 * 1000).toISOString(), bucket: req.query.bucket || '1m' } })))),
+  endpoint('/dashboard/history', guard(async req => { try { return Response.json(await history(req.payload, req)) } catch (error) { return dashboardError(400, error instanceof Error ? error.message : 'invalid_query') } })),
+  endpoint('/dashboard/devices', guard(async req => Response.json(await listDevices(req.payload, req)))),
+  endpoint('/dashboard/devices/:id', guard(async req => { try { const device = await req.payload.findByID({ collection: 'devices', id: Number(req.routeParams?.id), depth: 1, overrideAccess: true }); return Response.json(device) } catch { return dashboardError(404, 'device_not_found') } })),
+  endpoint('/dashboard/alerts', guard(async req => Response.json(await listAlerts(req.payload, req)))),
+  endpoint('/dashboard/system-health', guard(async req => { const data = await overview(req.payload); const account = await req.payload.find({ collection: 'service-accounts', overrideAccess: true, limit: 1, sort: '-lastUsedAt' }); return Response.json({ backend: 'available', database: 'available', telemetryRecentlyReceived: data.mostRecentReadingAt, gatewayLastUsedAt: account.docs[0]?.lastUsedAt ?? null, onlineDevices: data.totals.online, offlineDevices: data.totals.offline, averageLatencyMs: data.averages.latencyMs, note: 'Broker health is inferred from telemetry receipt, not directly probed.' }) })),
+  endpoint('/dashboard/map', guard(async req => { const devices = await req.payload.find({ collection: 'devices', depth: 1, limit: 200, overrideAccess: true }); const alerts = await req.payload.find({ collection: 'alerts', depth: 0, limit: 500, overrideAccess: true, where: { status: { in: ['active', 'acknowledged'] } } }); const severity = new Map<number, string>(); for (const alert of alerts.docs) { const id = typeof alert.device === 'object' ? alert.device.id : alert.device; if (id) severity.set(id, alert.severity === 'critical' ? 'critical' : severity.get(id) || 'warning') } return Response.json({ stations: devices.docs.map(device => { const location = typeof device.location === 'object' ? device.location : null; return { id: device.id, name: device.name, deviceId: device.deviceId, status: device.status, latitude: location?.latitude ?? null, longitude: location?.longitude ?? null, location: location?.name ?? null, latestMetrics: device.latestMetrics, lastSeen: device.lastSeen, alertSeverity: severity.get(device.id) ?? null } }) }) })),
+]

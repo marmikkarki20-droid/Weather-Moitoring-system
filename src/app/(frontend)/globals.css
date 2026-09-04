@@ -1,0 +1,38 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  --border: 240 5.9% 90%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 46.1%;
+  --primary: 240 5.9% 10%;
+  --primary-foreground: 0 0% 98%;
+  --temperature: 14 116 144;
+  --humidity: 37 99 235;
+  --pressure: 124 58 237;
+  --rainfall: 2 132 199;
+  --wind: 8 145 178;
+  --battery: 22 163 74;
+  --online: 22 163 74;
+  --offline: 220 38 38;
+  --warning: 217 119 6;
+  --critical: 220 38 38;
+}
+
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --primary: 0 0% 98%;
+  --primary-foreground: 240 5.9% 10%;
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
