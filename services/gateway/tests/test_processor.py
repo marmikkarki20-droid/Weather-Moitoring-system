@@ -69,6 +69,17 @@ def test_invalid_json_and_topic_mismatch_never_reach_payload(tmp_path) -> None: 
     assert client.sent == []
 
 
+def test_location_mismatch_never_reaches_payload(tmp_path) -> None:  # noqa: ANN001
+    subject, client, _ = processor(tmp_path, [DeliveryResult(status=DeliveryStatus.ACCEPTED)])
+    bad_payload = json.loads(payload())
+    bad_payload['locationCode'] = 'MEL'
+
+    result = subject.process('weathergrid/devices/WX-SYD-001/telemetry', json.dumps(bad_payload).encode())
+
+    assert result.status == 'location_mismatch'
+    assert client.sent == []
+
+
 def test_temporary_failure_buffers_then_flushes(tmp_path) -> None:  # noqa: ANN001
     subject, client, buffer = processor(
         tmp_path,

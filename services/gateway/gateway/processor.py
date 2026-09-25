@@ -52,6 +52,16 @@ class TelemetryProcessor:
             )
             return ProcessingResult('topic_device_mismatch')
 
+        expected_location = telemetry.deviceId.split('-')[1]
+        if telemetry.locationCode != expected_location:
+            logger.warning(
+                'telemetry_rejected reason=location_mismatch device=%s expected_location=%s payload_location=%s',
+                telemetry.deviceId,
+                expected_location,
+                telemetry.locationCode,
+            )
+            return ProcessingResult('location_mismatch')
+
         enriched = GatewayTelemetry(**telemetry.model_dump(), gatewayTimestamp=utc_now_iso())
         return self._deliver_or_buffer(enriched)
 
