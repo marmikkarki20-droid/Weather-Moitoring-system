@@ -76,6 +76,17 @@ def test_extra_fields_are_rejected() -> None:
         TelemetryMessage.model_validate({**_valid_payload(), "unexpected": True})
 
 
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [("deviceId", "INVALID-DEVICE"), ("locationCode", "MEL")],
+)
+def test_device_identity_and_location_must_agree(field: str, value: str) -> None:
+    payload = _valid_payload()
+    payload[field] = value
+    with pytest.raises(ValidationError):
+        TelemetryMessage.model_validate(payload)
+
+
 def test_message_ids_are_unique() -> None:
     first = _valid_payload()["messageId"]
     second = _valid_payload()["messageId"]

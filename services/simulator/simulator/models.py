@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 from typing import Any, Literal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 SCHEMA_VERSION = 1
 _UTC_MILLISECOND_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$")
@@ -42,7 +42,7 @@ class TelemetryMessage(BaseModel):
 
     schemaVersion: Literal[1] = SCHEMA_VERSION
     messageId: UUID
-    deviceId: str = Field(min_length=1)
+    deviceId: str = Field(pattern=r"^WX-[A-Z]{3}-001$")
     locationCode: str = Field(pattern=r"^[A-Z]{3}$")
     sequenceNumber: int = Field(strict=True, ge=1)
     temperature: float = Field(ge=-60, le=70)
@@ -54,6 +54,12 @@ class TelemetryMessage(BaseModel):
     deviceTimestamp: str
 
     _timestamp_is_utc = field_validator("deviceTimestamp")(_validate_utc_timestamp)
+
+    @model_validator(mode="after")
+    def validate_device_location(self) -> TelemetryMessage:
+        if self.locationCode != self.deviceId.split("-")[1]:
+            raise ValueError("locationCode must match the location in deviceId")
+        return self
 
     def to_json_bytes(self) -> bytes:
         return self.model_dump_json().encode("utf-8")
