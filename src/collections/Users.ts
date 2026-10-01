@@ -11,7 +11,10 @@ import { isAdmin, isAdminField, isAdminPanelUser } from '@/access'
  */
 export const Users: CollectionConfig = {
   slug: 'users',
-  auth: true,
+  auth: {
+    maxLoginAttempts: 10,
+    lockTime: 5 * 60 * 1000,
+  },
   admin: {
     useAsTitle: 'email',
   },
@@ -47,4 +50,3 @@ export const Users: CollectionConfig = {
     },
   ],
 }
-

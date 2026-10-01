@@ -203,4 +203,4 @@ def get_mqtt_settings() -> MQTTSettings:
 
 
 # Generated, non-sensitive state lives outside the source package.
-DEFAULT_STATE_DIR = REPO_ROOT / "services" / "simulator" / "state"
+DEFAULT_STATE_DIR = REPO_ROOT / "runtime" / "simulator-state"

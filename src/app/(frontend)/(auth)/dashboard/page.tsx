@@ -4,6 +4,8 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import type { Device } from '@/payload-types'
 import { AlertActions } from '@/components/alert-actions'
+import Link from 'next/link'
+import { Activity, BellRing, Cpu, Database, MapPin, Radio, ServerOff, TriangleAlert } from 'lucide-react'
 
 /**
  * Summary statistics and a device table read via Payload's server-side
@@ -71,10 +73,12 @@ async function loadDashboardData(): Promise<{ data: DashboardData | null; error:
 }
 
 function StatCard({ label, value }: { label: string; value: string | number }) {
+  const icons = { Locations: MapPin, Devices: Cpu, 'Online devices': Radio, 'Offline devices': ServerOff, 'Stored readings': Database, 'Most recent reading': Activity, 'Active alerts': BellRing, 'Critical alerts': TriangleAlert }
+  const Icon = icons[label as keyof typeof icons] || Activity
   return (
-    <div className="rounded-lg border border-border bg-card p-4">
-      <p className="text-xs font-medium uppercase text-muted-foreground">{label}</p>
-      <p className="mt-1 text-2xl font-semibold">{value}</p>
+    <div className="stat-card">
+      <div className="stat-card-top"><p>{label}</p><span className="stat-icon"><Icon size={16} /></span></div>
+      <strong>{value}</strong><small>Current network status</small>
     </div>
   )
 }
@@ -82,19 +86,19 @@ function StatCard({ label, value }: { label: string; value: string | number }) {
 function statusBadgeClasses(status: string) {
   switch (status) {
     case 'online':
-      return 'bg-green-100 text-green-800'
+      return 'status-badge status-online'
     case 'offline':
-      return 'bg-red-100 text-red-800'
+      return 'status-badge status-offline'
     case 'degraded':
-      return 'bg-amber-100 text-amber-800'
+      return 'status-badge status-degraded'
     case 'maintenance':
-      return 'bg-blue-100 text-blue-800'
+      return 'status-badge status-maintenance'
     default:
       return 'bg-muted text-muted-foreground'
   }
 }
 
-function severityBadgeClasses(severity: string) { return severity === 'critical' ? 'bg-red-100 text-red-800' : 'bg-amber-100 text-amber-800' }
+function severityBadgeClasses(severity: string) { return severity === 'critical' ? 'status-badge status-critical' : 'status-badge status-warning' }
 
 function formatDateTime(value: string | null | undefined) {
   if (!value) return '—'
@@ -121,13 +125,10 @@ export default async function DashboardPage() {
   const { data, error } = await loadDashboardData()
 
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Dashboard</h1>
-        <p className="text-sm text-muted-foreground">
-          Signed in as <strong>{user?.name || user?.email}</strong> ({user?.email}) — role:{' '}
-          <span className="rounded bg-muted px-2 py-0.5 text-xs uppercase">{role}</span>
-        </p>
+    <div>
+      <div className="page-heading">
+        <div><p className="eyebrow">Network overview</p><h1>Weather operations</h1><p>Live station health, telemetry volume, and alerts across all locations.</p></div>
+        <p>Signed in as <strong>{user?.name || user?.email}</strong></p>
       </div>
 
       {error && (
@@ -138,7 +139,7 @@ export default async function DashboardPage() {
 
       {data && (
         <>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-8">
+          <div className="stat-grid">
             <StatCard label="Locations" value={data.locationCount} />
             <StatCard label="Devices" value={data.deviceCount} />
             <StatCard label="Online devices" value={data.onlineDeviceCount} />
@@ -149,14 +150,14 @@ export default async function DashboardPage() {
             <StatCard label="Critical alerts" value={data.criticalAlertCount} />
           </div>
 
-          <div className="rounded-lg border border-border">
-            <div className="border-b border-border p-4"><h2 className="text-lg font-medium">Unresolved alerts</h2></div>
-            {data.recentAlerts.length === 0 ? <p className="p-6 text-sm text-muted-foreground">No active or acknowledged alerts.</p> : <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="border-b border-border text-left text-xs uppercase text-muted-foreground"><th className="p-3">Severity</th><th className="p-3">Device</th><th className="p-3">Message</th><th className="p-3">Status</th><th className="p-3">First triggered</th><th className="p-3">Last triggered</th>{role === 'admin' && <th className="p-3">Actions</th>}</tr></thead><tbody>{data.recentAlerts.map(alert => <tr key={alert.id} className="border-b border-border last:border-0"><td className="p-3"><span className={`rounded px-2 py-0.5 text-xs uppercase ${severityBadgeClasses(alert.severity)}`}>{alert.severity}</span></td><td className="p-3">{alert.device}</td><td className="p-3">{alert.message}</td><td className="p-3">{alert.status}</td><td className="p-3">{formatDateTime(alert.firstTriggeredAt)}</td><td className="p-3">{formatDateTime(alert.lastTriggeredAt)}</td>{role === 'admin' && <td className="p-3"><AlertActions alertId={alert.id} /></td>}</tr>)}</tbody></table></div>}
+          <div className="content-grid"><div><div className="panel">
+            <div className="panel-header"><h2>Unresolved alerts</h2><Link href="/dashboard/alerts">View all alerts</Link></div>
+            {data.recentAlerts.length === 0 ? <p className="empty-state">No active or acknowledged alerts.</p> : <div className="overflow-x-auto"><table className="w-full"><thead><tr><th>Severity</th><th>Device</th><th>Message</th><th>Status</th><th>Last triggered</th>{role === 'admin' && <th>Actions</th>}</tr></thead><tbody>{data.recentAlerts.map(alert => <tr key={alert.id}><td><span className={severityBadgeClasses(alert.severity)}>{alert.severity}</span></td><td>{alert.device}</td><td>{alert.message}</td><td>{alert.status}</td><td>{formatDateTime(alert.lastTriggeredAt)}</td>{role === 'admin' && <td><AlertActions alertId={alert.id} /></td>}</tr>)}</tbody></table></div>}
           </div>
 
-          <div className="rounded-lg border border-border">
-            <div className="border-b border-border p-4">
-              <h2 className="text-lg font-medium">Devices</h2>
+          <div className="panel">
+            <div className="panel-header">
+              <h2>Station status</h2><Link href="/dashboard/devices">View all devices</Link>
             </div>
             {data.devices.length === 0 ? (
               <p className="p-6 text-sm text-muted-foreground">
@@ -184,7 +185,7 @@ export default async function DashboardPage() {
                         <td className="p-3">{locationLabel(device)}</td>
                         <td className="p-3">
                           <span
-                            className={`rounded px-2 py-0.5 text-xs uppercase ${statusBadgeClasses(device.status)}`}
+                            className={statusBadgeClasses(device.status)}
                           >
                             {device.status}
                           </span>
@@ -199,7 +200,7 @@ export default async function DashboardPage() {
                 </table>
               </div>
             )}
-          </div>
+          </div></div><aside><div className="panel"><div className="panel-header"><h2>Quick access</h2></div><div className="quick-list"><Link href="/dashboard/live"><Radio size={16} />Live monitoring</Link><Link href="/dashboard/map"><MapPin size={16} />Weather map</Link><Link href="/dashboard/reports"><Database size={16} />Export reports</Link><Link href="/dashboard/system"><Activity size={16} />System health</Link></div></div></aside></div>
         </>
       )}
     </div>

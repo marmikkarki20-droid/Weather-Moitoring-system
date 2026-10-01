@@ -1,0 +1,171 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1000" viewBox="0 0 1800 1000" role="img" aria-labelledby="title desc">
+  <title id="title">WeatherGrid High-Level Architecture</title>
+  <desc id="desc">High-level system architecture for WeatherGrid showing devices, MQTT broker, edge gateway, Next.js and Payload application, PostgreSQL, workers, email delivery, browser dashboard, and simulation command flow.</desc>
+  <defs>
+    <linearGradient id="page-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fbff" />
+      <stop offset="0.56" stop-color="#f7faf8" />
+      <stop offset="1" stop-color="#fff8f2" />
+    </linearGradient>
+    <filter id="shadow" x="-12%" y="-16%" width="124%" height="136%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#0f172a" flood-opacity="0.12" />
+    </filter>
+    <marker id="arrow-blue" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#2563eb" />
+    </marker>
+    <marker id="arrow-purple" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#6d28d9" />
+    </marker>
+    <marker id="arrow-teal" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#0f766e" />
+    </marker>
+    <marker id="arrow-amber" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#b45309" />
+    </marker>
+    <marker id="arrow-rose" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="10" markerHeight="10" orient="auto">
+      <path d="M2 2 L10 6 L2 10 Z" fill="#be123c" />
+    </marker>
+    <style>
+      text { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0; }
+      .page-title { font-size: 48px; font-weight: 850; fill: #0f172a; }
+      .subtitle { font-size: 20px; font-weight: 500; fill: #475569; }
+      .layer-title { font-size: 22px; font-weight: 830; fill: #111827; }
+      .node-title { font-size: 24px; font-weight: 830; fill: #0f172a; }
+      .body { font-size: 17px; font-weight: 520; fill: #334155; }
+      .small { font-size: 15px; font-weight: 520; fill: #475569; }
+      .label { font-size: 16px; font-weight: 760; fill: #1e293b; }
+      .note { font-size: 14px; font-weight: 560; fill: #64748b; }
+      .panel { stroke-width: 2; filter: url(#shadow); }
+      .card { fill: #ffffff; stroke-width: 2.4; filter: url(#shadow); }
+      .subcard { fill: #ffffff; stroke-width: 2; }
+      .arrow-blue { stroke: #2563eb; stroke-width: 4; fill: none; marker-end: url(#arrow-blue); }
+      .arrow-purple { stroke: #6d28d9; stroke-width: 4; fill: none; marker-end: url(#arrow-purple); }
+      .arrow-teal { stroke: #0f766e; stroke-width: 4; fill: none; marker-end: url(#arrow-teal); }
+      .arrow-amber { stroke: #b45309; stroke-width: 4; fill: none; marker-end: url(#arrow-amber); }
+      .arrow-rose { stroke: #be123c; stroke-width: 4; fill: none; marker-end: url(#arrow-rose); }
+      .dash { stroke-dasharray: 10 9; }
+      .thin { stroke-width: 3; }
+    </style>
+  </defs>
+
+  <rect width="1800" height="1000" fill="url(#page-bg)" />
+  <text x="70" y="74" class="page-title">WeatherGrid High-Level Architecture</text>
+  <text x="72" y="114" class="subtitle">MQTT devices feed a protected gateway; Payload stores validated readings, drives live dashboards, evaluates alerts, and sends notifications.</text>
+
+  <!-- Browser clients -->
+  <rect x="1175" y="150" width="360" height="140" rx="22" fill="#eff6ff" stroke="#bfdbfe" class="panel" />
+  <text x="1208" y="192" class="layer-title">Client Layer</text>
+  <rect x="1212" y="216" width="286" height="50" rx="12" class="subcard" stroke="#60a5fa" />
+  <rect x="1238" y="229" width="44" height="28" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="3" />
+  <line x1="1247" y1="265" x2="1273" y2="265" stroke="#2563eb" stroke-width="4" stroke-linecap="round" />
+  <line x1="1260" y1="256" x2="1260" y2="265" stroke="#2563eb" stroke-width="4" stroke-linecap="round" />
+  <text x="1306" y="248" class="body">Dashboard + Payload Admin</text>
+
+  <!-- Application -->
+  <rect x="1165" y="350" width="380" height="420" rx="24" fill="#ecfdf5" stroke="#bbf7d0" class="panel" />
+  <text x="1198" y="392" class="layer-title">Application Layer</text>
+  <rect x="1206" y="418" width="298" height="58" rx="13" class="subcard" stroke="#14b8a6" />
+  <text x="1230" y="454" class="node-title">Next.js UI</text>
+  <rect x="1206" y="496" width="298" height="58" rx="13" class="subcard" stroke="#14b8a6" />
+  <text x="1230" y="532" class="node-title">Payload CMS API</text>
+  <rect x="1206" y="574" width="298" height="58" rx="13" class="subcard" stroke="#14b8a6" />
+  <text x="1230" y="610" class="node-title">Telemetry Ingest</text>
+  <rect x="1206" y="652" width="298" height="58" rx="13" class="subcard" stroke="#14b8a6" />
+  <text x="1230" y="688" class="node-title">Alerts + SSE Hub</text>
+  <text x="1207" y="744" class="small">Dashboard APIs, simulation commands, reports</text>
+
+  <!-- Data, workers, email -->
+  <rect x="1600" y="382" width="150" height="140" rx="22" fill="#fffbeb" stroke="#fde68a" class="panel" />
+  <text x="1626" y="424" class="layer-title">Data</text>
+  <ellipse cx="1675" cy="456" rx="34" ry="14" fill="#fef3c7" stroke="#b45309" stroke-width="3" />
+  <path d="M1641 456 v28 c0 8 15 14 34 14 s34 -6 34 -14 v-28" fill="#fef3c7" stroke="#b45309" stroke-width="3" />
+  <path d="M1641 471 c0 8 15 14 34 14 s34 -6 34 -14" fill="none" stroke="#b45309" stroke-width="3" />
+  <text x="1622" y="511" class="small">PostgreSQL</text>
+
+  <rect x="1580" y="585" width="190" height="158" rx="22" fill="#fff1f2" stroke="#fecdd3" class="panel" />
+  <text x="1610" y="627" class="layer-title">Workers</text>
+  <rect x="1606" y="646" width="138" height="34" rx="10" class="subcard" stroke="#fb7185" />
+  <text x="1620" y="668" class="small">Offline check</text>
+  <rect x="1606" y="696" width="138" height="34" rx="10" class="subcard" stroke="#fb7185" />
+  <text x="1618" y="718" class="small">Notifications</text>
+
+  <rect x="1580" y="800" width="190" height="120" rx="22" fill="#fff7ed" stroke="#fed7aa" class="panel" />
+  <text x="1617" y="840" class="layer-title">Email</text>
+  <path d="M1608 858 h62 v28 h-62 z" fill="#ffffff" stroke="#f97316" stroke-width="3" stroke-linejoin="round" />
+  <path d="M1608 860 l31 21 l31 -21" fill="none" stroke="#f97316" stroke-width="3" stroke-linejoin="round" />
+  <text x="1622" y="910" class="small">Preview/Resend</text>
+
+  <!-- Device layer -->
+  <rect x="70" y="585" width="300" height="205" rx="22" fill="#f8fafc" stroke="#cbd5e1" class="panel" />
+  <text x="102" y="628" class="layer-title">Device Layer</text>
+  <rect x="108" y="650" width="224" height="66" rx="13" class="card" stroke="#60a5fa" />
+  <path d="M137 696 h48 M150 696 v-31 M178 696 v-42" stroke="#2563eb" stroke-width="6" stroke-linecap="round" />
+  <circle cx="150" cy="663" r="8" fill="#dbeafe" stroke="#2563eb" stroke-width="3" />
+  <circle cx="178" cy="651" r="8" fill="#dbeafe" stroke="#2563eb" stroke-width="3" />
+  <text x="214" y="680" class="node-title">Python</text>
+  <text x="214" y="703" class="body">Simulators</text>
+  <text x="102" y="746" class="small">WX-SYD-001, WX-MEL-001, WX-BNE-001</text>
+  <text x="102" y="770" class="small">Telemetry + retained online/offline status</text>
+
+  <!-- Messaging layer -->
+  <rect x="440" y="585" width="300" height="205" rx="22" fill="#f5f3ff" stroke="#ddd6fe" class="panel" />
+  <text x="472" y="628" class="layer-title">Messaging Layer</text>
+  <rect x="482" y="650" width="216" height="66" rx="13" class="card" stroke="#8b5cf6" />
+  <path d="M557 674 c18 -19 44 -19 62 0" fill="none" stroke="#6d28d9" stroke-width="6" stroke-linecap="round" />
+  <path d="M573 688 c9 -9 19 -9 28 0" fill="none" stroke="#6d28d9" stroke-width="6" stroke-linecap="round" />
+  <circle cx="587" cy="704" r="7" fill="#6d28d9" />
+  <text x="502" y="746" class="node-title">Mosquitto MQTT</text>
+  <text x="472" y="770" class="small">telemetry, status, commands, acks</text>
+
+  <!-- Edge layer -->
+  <rect x="810" y="585" width="300" height="205" rx="22" fill="#eef2ff" stroke="#c7d2fe" class="panel" />
+  <text x="842" y="628" class="layer-title">Edge Layer</text>
+  <rect x="852" y="650" width="216" height="66" rx="13" class="card" stroke="#94a3b8" />
+  <rect x="882" y="685" width="154" height="22" rx="6" fill="#e2e8f0" stroke="#475569" stroke-width="3" />
+  <line x1="901" y1="685" x2="895" y2="657" stroke="#475569" stroke-width="6" stroke-linecap="round" />
+  <line x1="1018" y1="685" x2="1024" y2="657" stroke="#475569" stroke-width="6" stroke-linecap="round" />
+  <circle cx="998" cy="696" r="5" fill="#14b8a6" />
+  <circle cx="1018" cy="696" r="5" fill="#14b8a6" />
+  <text x="860" y="746" class="node-title">Edge Gateway</text>
+  <text x="842" y="770" class="small">Validate, timestamp, retry buffer</text>
+
+  <!-- Main telemetry path -->
+  <path d="M370 688 H439" class="arrow-purple" />
+  <text x="383" y="664" class="label">MQTT QoS 1</text>
+  <text x="382" y="714" class="small">telemetry/status</text>
+
+  <path d="M740 688 H809" class="arrow-purple" />
+  <text x="756" y="664" class="label">subscribe</text>
+  <text x="748" y="714" class="small">telemetry/acks</text>
+
+  <path d="M1110 688 H1164" class="arrow-teal" />
+  <text x="1118" y="664" class="label">HTTP ingest</text>
+  <text x="1116" y="714" class="small">API key</text>
+
+  <path d="M1545 604 C1572 604 1575 494 1599 494" class="arrow-amber" />
+  <text x="1549" y="582" class="label">store/read</text>
+
+  <!-- Client and live updates -->
+  <path d="M1355 290 V349" class="arrow-blue" />
+  <text x="1376" y="326" class="label">HTTPS</text>
+
+  <path d="M1230 652 C1090 550 1095 318 1175 245" class="arrow-blue dash thin" />
+  <text x="1025" y="482" class="label">SSE live events</text>
+
+  <!-- Worker path -->
+  <path d="M1675 522 V584" class="arrow-amber" />
+  <text x="1694" y="557" class="label">poll</text>
+
+  <path d="M1675 743 V799" class="arrow-rose" />
+  <text x="1694" y="782" class="label">send</text>
+
+  <path d="M1504 681 C1530 681 1547 670 1579 670" class="arrow-rose dash thin" />
+  <text x="1498" y="658" class="label">alerts/outbox</text>
+
+  <!-- Simulation command path -->
+  <path d="M1206 728 C1040 875 680 880 590 790" class="arrow-purple dash thin" />
+  <text x="742" y="865" class="label">simulation commands</text>
+
+  <rect x="70" y="940" width="1700" height="36" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="2" />
+  <text x="94" y="963" class="note">Solid arrows show telemetry, storage, dashboard access, and notification delivery. Dashed arrows show live SSE fan-out and simulation command/control.</text>
+</svg>

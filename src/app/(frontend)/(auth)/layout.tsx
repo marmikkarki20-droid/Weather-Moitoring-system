@@ -28,9 +28,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const role = dashboardUser.role ?? 'viewer'
 
   return (
-    <DashboardRealtimeProvider><div className="flex min-h-screen flex-col">
-      <AppHeader userLabel={userLabel} role={role} />
-      <div className="flex flex-1"><AppSidebar /><main className="min-w-0 flex-1 p-4 sm:p-6">{children}</main></div>
+    <DashboardRealtimeProvider><div className="app-shell">
+      <AppSidebar />
+      <div className="app-workspace"><AppHeader userLabel={userLabel} role={role} /><main className="app-main">{children}</main></div>
     </div></DashboardRealtimeProvider>
   )
 }

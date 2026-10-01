@@ -1,2 +1,30 @@
-/* THIS FILE WAS GENERATED AUTOMATICALLY BY PAYLOAD. */
-/* DO NOT MODIFY IT BECAUSE IT COULD BE REWRITTEN AT ANY TIME. */
+/* WeatherGrid visual theme for Payload Admin. */
+:root {
+  --wg-ink: #18353c; --wg-muted: #718489; --wg-teal: #087f8c; --wg-teal-soft: #e8f5f6;
+  --wg-green: #237b58; --wg-amber: #a36a1c; --wg-red: #b94343; --wg-border: #dbe4e6;
+  --wg-surface: #fff; --wg-canvas: #f4f7f8; --style-radius-s: 5px; --style-radius-m: 7px; --style-radius-l: 8px;
+  --theme-bg: var(--wg-canvas); --theme-text: var(--wg-ink); --theme-elevation-0: #fff;
+  --theme-elevation-50: #f7f9f9; --theme-elevation-100: #edf1f2; --theme-elevation-150: #e4eaec;
+  --theme-elevation-200: #dbe4e6; --theme-elevation-500: #718489; --theme-elevation-800: #29484f;
+  --theme-elevation-1000: #18353c; --theme-success-500: #087f8c;
+}
+html[data-theme='dark'] {
+  --wg-ink: #e9f1f2; --wg-muted: #9db0b4; --wg-teal-soft: #153a41; --wg-border: #2c444a;
+  --wg-surface: #16292f; --wg-canvas: #102127; --theme-bg: var(--wg-canvas); --theme-text: var(--wg-ink);
+  --theme-elevation-0: #16292f; --theme-elevation-50: #1b3036; --theme-elevation-100: #20373e;
+  --theme-elevation-150: #294149; --theme-elevation-200: #324c53; --theme-elevation-500: #9db0b4;
+  --theme-elevation-800: #d7e4e6; --theme-elevation-1000: #f5f9fa;
+}
+body { background: var(--wg-canvas); letter-spacing: 0; }
+.app-header { border-bottom: 1px solid var(--wg-border); background: color-mix(in srgb, var(--wg-surface) 94%, transparent); backdrop-filter: blur(12px); }
+.app-header__content::before { display: inline-flex; align-items: center; min-height: 32px; margin-right: 18px; padding: 0 11px; border-radius: 6px; background: var(--wg-teal); color: #fff; content: 'WeatherGrid Admin'; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.nav { border-right: 1px solid var(--wg-border); background: var(--wg-surface); }
+.nav__header { border-bottom: 1px solid var(--wg-border); }.nav-group__label { color: var(--wg-muted); font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.nav__link { border-radius: 5px; color: var(--wg-muted); font-size: 13px; font-weight: 500; }.nav__link:hover { background: var(--theme-elevation-50); color: var(--wg-ink); }.nav__link.active, .nav__link[aria-current='page'] { background: var(--wg-teal-soft); color: var(--wg-teal); }.nav__controls { border-top: 1px solid var(--wg-border); }
+.template-default__wrap { background: var(--wg-canvas); }.gutter { max-width: 1500px; }.dashboard { padding-top: 34px; padding-bottom: 60px; }.dashboard h1, .dashboard h2, .dashboard h3 { color: var(--wg-ink); letter-spacing: 0; }.dashboard h1 { margin-bottom: 24px; font-size: 28px; }.collections__group { margin-bottom: 30px; }.collections__label { margin-bottom: 12px; color: var(--wg-ink); font-size: 17px; font-weight: 700; }.collections__card-list { gap: 12px; }
+.card { position: relative; min-height: 86px; overflow: hidden; border: 1px solid var(--wg-border); border-radius: 7px; background: var(--wg-surface); box-shadow: 0 1px 2px rgb(20 49 56 / 4%); transition: border-color .15s, box-shadow .15s, transform .15s; }.card::before { position: absolute; inset: 0 auto 0 0; width: 3px; background: var(--wg-teal); content: ''; }.card:hover { border-color: #9dcbd0; box-shadow: 0 6px 18px rgb(20 49 56 / 8%); transform: translateY(-1px); }.card__title { color: var(--wg-ink); font-size: 12px; font-weight: 700; }.card__actions .btn { border-color: var(--wg-border); color: var(--wg-teal); }.card-alerts::before, .card-alert-rules::before { background: var(--wg-red); }.card-system-events::before, .card-service-accounts::before { background: #5b6f9c; }.card-simulation-commands::before { background: var(--wg-amber); }.card-notification-preferences::before, .card-notification-outbox::before { background: var(--wg-green); }
+.collection-list, .document-fields, .doc-controls, .list-controls, .list-header, .auth-fields { color: var(--wg-ink); }.table { overflow: hidden; border: 1px solid var(--wg-border); border-radius: 7px; background: var(--wg-surface); }.table thead { background: var(--theme-elevation-50); }.table th { color: var(--wg-muted); font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }.table td { border-color: var(--theme-elevation-100); font-size: 12px; }.table tbody tr:hover { background: color-mix(in srgb, var(--wg-teal-soft) 40%, var(--wg-surface)); }
+.field-type input, .field-type textarea, .react-select .rs__control { border-color: var(--wg-border); border-radius: 6px; background: var(--wg-surface); }.field-type input:focus, .field-type textarea:focus, .react-select .rs__control--is-focused { border-color: var(--wg-teal); box-shadow: 0 0 0 3px rgb(8 127 140 / 12%); }.field-label { color: var(--wg-ink); font-size: 12px; font-weight: 600; }.field-description { color: var(--wg-muted); }.btn { border-radius: 6px; font-weight: 600; }.btn--style-primary { border-color: var(--wg-teal); background: var(--wg-teal); }.btn--style-primary:hover { border-color: #076f7a; background: #076f7a; }.pill { border-radius: 999px; }
+.login { background: var(--wg-canvas); }.login__brand { margin-bottom: 20px; }.login__brand::after { display: block; margin-top: 14px; color: var(--wg-ink); content: 'WeatherGrid Administration'; font-size: 18px; font-weight: 700; text-align: center; }.login__form { padding: 28px; border: 1px solid var(--wg-border); border-radius: 8px; background: var(--wg-surface); box-shadow: 0 12px 36px rgb(20 49 56 / 8%); }
+.card__actions .btn { width: 28px; height: 28px; min-height: 28px; padding: 0; border-radius: 50%; }
+@media (max-width: 768px) { .app-header__content::before { display: none; }.dashboard { padding-top: 22px; }.collections__card-list { grid-template-columns: 1fr; }.card { min-height: 72px; }.login__form { padding: 20px; } }

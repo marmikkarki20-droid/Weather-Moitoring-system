@@ -26,4 +26,4 @@ export function DashboardRealtimeProvider({ children }: { children: React.ReactN
   return <RealtimeContext.Provider value={{ state, lastEvent, stale }}>{children}</RealtimeContext.Provider>
 }
 export const useDashboardRealtime = () => useContext(RealtimeContext)
-export function ConnectionStatus() { const { state, stale } = useDashboardRealtime(); return <span aria-live="polite" className={`rounded-full border px-2 py-1 text-xs ${state === 'connected' ? 'border-emerald-500/40 text-emerald-700 dark:text-emerald-300' : 'border-amber-500/40 text-amber-700 dark:text-amber-300'}`}>{state}{stale ? ' · data may be stale' : ''}</span> }
+export function ConnectionStatus() { const { state, stale } = useDashboardRealtime(); return <span aria-live="polite" className={`connection-status ${state === 'connected' ? 'connected' : 'warning'}`}><i />{state}{stale ? ' · stale data' : ''}</span> }
