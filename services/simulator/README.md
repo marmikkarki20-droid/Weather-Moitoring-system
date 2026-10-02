@@ -92,6 +92,18 @@ rises. Values are rounded to one decimal place and constrained to Payload-compat
 ranges. No invalid values, duplicates, spikes, or other fault scenarios are generated in this
 stage.
 
+## Device identity validation
+
+Each simulated weather station has a fixed device ID and location code:
+
+- `WX-SYD-001` → `SYD`
+- `WX-MEL-001` → `MEL`
+- `WX-BNE-001` → `BNE`
+
+The simulator validates the device ID and location code before telemetry is published.
+If the device ID does not match its expected location, the message is rejected.
+This helps prevent incorrectly labelled weather data from entering the system.
+
 ## MQTT contract
 
 | Kind | Topic | QoS | Retain |
